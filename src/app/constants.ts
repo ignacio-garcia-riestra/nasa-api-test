@@ -11,5 +11,6 @@ export const ROVERS_IMAGES: RoversExampleImages = {
     "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00458/ids/edr/browse/ncam/NLF_0458_0707590354_274ECM_N0260218NCAM13457_04_195J01_1200.jpg",
 };
 
-export const getRoversURL =
-  "https://api.nasa.gov/mars-photos/api/v1/rovers?api_key=DEMO_KEY";
+export const rootUrl = "https://api.nasa.gov/mars-photos/api/v1/rovers";
+
+export const getRoversUrl = `${rootUrl}?api_key=DEMO_KEY`;

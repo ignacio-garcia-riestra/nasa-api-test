@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getRoversURL, ROVERS_IMAGES } from "./constants";
+import { getRoversUrl, ROVERS_IMAGES } from "./constants";
 import { Rover } from "./interfaces/Rover";
 
 export default function Home() {
@@ -17,7 +17,7 @@ export default function Home() {
   };
 
   const getRovers = async () => {
-    const res = await axios.get(getRoversURL);
+    const res = await axios.get(getRoversUrl);
     return res.data.rovers;
   };
 
