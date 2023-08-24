@@ -1,47 +1,80 @@
 "use client";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { rootUrl } from "../constants";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import ImageListItemBar from "@mui/material/ImageListItemBar";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useGlobalContext } from "../context/store";
+import { useRouter } from "next/navigation";
 
 export default function Rover() {
-  const rover = JSON.parse(localStorage.getItem("rover") || "");
-  const photosInitialState: Array<object> = [];
-  const [photos, setPhotos] = useState(photosInitialState);
+  const router = useRouter();
 
-  const fetchLastDayPhotos = async () => {
-    await axios
-      .get(
-        `${rootUrl}/${rover.name}/photos?earth_date=${rover.max_date}&api_key=DEMO_KEY`
-      )
-      .then((res) => setPhotos(res.data.photos));
+  const { selectedRover, photos } = useGlobalContext();
+
+  const fetchPhotos = async (page: number) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return photos.slice((page - 1) * 25, page * 25);
   };
 
-  const fetchLastWeekPhotos = async () => {
-    const lastWeekPhotos: Array<object> = [];
-    let date = rover.max_date;
-    let count = 1;
-    while (count <= 7) {
-      await axios
-        .get(
-          `${rootUrl}/${rover.name}/photos?earth_date=${date}&api_key=DEMO_KEY`
-        )
-        .then((res) => lastWeekPhotos.push(...res.data.photos));
-      date = new Date(Date.parse(date) - 1000 * 60 * 60 * 24)
-        .toISOString()
-        .substring(0, 10);
-      count++;
+  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
+    ["query"],
+    async ({ pageParam = 1 }) => {
+      const response = await fetchPhotos(pageParam);
+      return response;
+    },
+    {
+      getNextPageParam: (_, pages) => {
+        return pages.length + 1;
+      },
+      initialData: {
+        pages: [photos.slice(0, 25)],
+        pageParams: [1],
+      },
     }
-    setPhotos(lastWeekPhotos);
-  };
+  );
 
-  useEffect(() => {
-    if (rover.status === "active") {
-      fetchLastDayPhotos();
-    }
-    if (rover.status === "complete") {
-      fetchLastWeekPhotos();
-    }
-  }, [photos.length]);
+  const allPagesWereLoaded = () =>
+    !((data?.pages.length ?? 0) < Math.ceil(photos.length / 25));
 
-  return <div>{rover ? <h1>{rover.name.toUpperCase()}</h1> : null}</div>;
+  return (
+    <div className="bg-blue-200 flex flex-col items-center">
+      <button onClick={() => router.replace(`/`)}>Back to home</button>
+      {selectedRover ? <h1>{selectedRover?.name.toUpperCase()}</h1> : null}
+
+      {data ? (
+        <>
+          {data?.pages.map((page, index) => (
+            <ImageList key={index} className="w-2/3 mb-12" cols={5} gap={16}>
+              {page.map((photo) => (
+                <ImageListItem key={photo.id}>
+                  <img
+                    src={photo.img_src}
+                    alt={`${photo.rover.name} mars-rover photo`}
+                    loading="lazy"
+                  />
+                  <ImageListItemBar
+                    title={`Camera: ${photo.camera.full_name}`}
+                    subtitle={`Date: ${photo.earth_date}`}
+                  />
+                </ImageListItem>
+              ))}
+            </ImageList>
+          ))}
+
+          <button
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage || allPagesWereLoaded()}
+          >
+            {isFetchingNextPage
+              ? "Loading more photos..."
+              : !allPagesWereLoaded()
+              ? "Load more photos"
+              : "No more photos to load"}
+          </button>
+        </>
+      ) : (
+        <></>
+      )}
+    </div>
+  );
 }

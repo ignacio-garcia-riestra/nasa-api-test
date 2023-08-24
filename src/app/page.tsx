@@ -2,18 +2,52 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getRoversUrl, ROVERS_IMAGES } from "./constants";
+import { getRoversUrl, rootUrl, ROVERS_IMAGES } from "./constants";
+import { useGlobalContext } from "./context/store";
 import { Rover } from "./interfaces/Rover";
 
 export default function Home() {
   const router = useRouter();
 
+  const { setSelectedRover, setPhotos } = useGlobalContext();
   const roversInitialValue: Array<Rover> = [];
   const [rovers, setRovers] = useState(roversInitialValue);
 
+  const fetchLastDayPhotos = async (rover: Rover) => {
+    await axios
+      .get(
+        `${rootUrl}/${rover.name}/photos?earth_date=${rover.max_date}&api_key=lEScrZ86q27X40UCFBgd9tv193Ne2ybhvHIAfkIw`
+      )
+      .then((res) => setPhotos(res.data.photos));
+  };
+
+  const fetchLastWeekPhotos = async (rover: Rover) => {
+    const lastWeekPhotos: Array<object> = [];
+    let date = rover.max_date;
+    let count = 1;
+    while (count <= 7) {
+      await axios
+        .get(
+          `${rootUrl}/${rover.name}/photos?earth_date=${date}&api_key=lEScrZ86q27X40UCFBgd9tv193Ne2ybhvHIAfkIw`
+        )
+        .then((res) => lastWeekPhotos.push(...res.data.photos));
+      if (date)
+        date = new Date(Date.parse(date) - 1000 * 60 * 60 * 24)
+          .toISOString()
+          .substring(0, 10);
+      count++;
+    }
+    setPhotos(lastWeekPhotos);
+  };
+
   const onClickHandler = (rover: Rover) => {
-    localStorage.setItem("rover", JSON.stringify(rover));
-    router.push(`/${rover.name}`);
+    setSelectedRover(rover);
+    if (rover.status === "active") {
+      fetchLastDayPhotos(rover).then(() => router.replace(`/${rover.name}`));
+    }
+    if (rover.status === "complete") {
+      fetchLastWeekPhotos(rover).then(() => router.replace(`/${rover.name}`));
+    }
   };
 
   const getRovers = async () => {
@@ -24,8 +58,6 @@ export default function Home() {
   useEffect(() => {
     if (!rovers.length) {
       getRovers().then((res) => setRovers(res));
-    } else {
-      localStorage.removeItem("rover");
     }
   }, [rovers.length]);
 

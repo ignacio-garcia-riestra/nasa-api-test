@@ -13,4 +13,4 @@ export const ROVERS_IMAGES: RoversExampleImages = {
 
 export const rootUrl = "https://api.nasa.gov/mars-photos/api/v1/rovers";
 
-export const getRoversUrl = `${rootUrl}?api_key=DEMO_KEY`;
+export const getRoversUrl = `${rootUrl}?api_key=lEScrZ86q27X40UCFBgd9tv193Ne2ybhvHIAfkIw`;
