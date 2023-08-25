@@ -35,8 +35,8 @@ export default function Home() {
       >
         <Typography
           variant="h2"
-          mt={0}
-          pl={45}
+          mt={4}
+          pl="18%"
           color="whitesmoke"
           fontFamily="Play"
         >
@@ -47,8 +47,13 @@ export default function Home() {
           <Grid
             container
             spacing={{ xs: 2, md: 3 }}
-            className="bg-slate-100 w-1/3 p-9 self-end justify-around rounded-2xl opacity-60"
+            className="bg-slate-100 w-1/3 p-6 -mt-16 self-end justify-around rounded-2xl opacity-60"
           >
+            <Grid xs={12} textAlign="center" fontFamily="Play" mb={2}>
+              <span className="text-2xl font-semibold">
+                click on a rover to view its photos
+              </span>
+            </Grid>
             {Object.values(rovers).map((rover: Rover) => {
               const roverName = rover.name.toLowerCase();
               const exampleImageUrl = ROVERS_IMAGES[roverName];
