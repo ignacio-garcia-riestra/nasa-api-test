@@ -33,7 +33,13 @@ export default function Home() {
         id="home"
         className="bg-mars-space h-screen pt-8 flex flex-col"
       >
-        <Typography variant="h2" mt={0} pl={45} color="whitesmoke">
+        <Typography
+          variant="h2"
+          mt={0}
+          pl={45}
+          color="whitesmoke"
+          fontFamily="Play"
+        >
           Lets explore Mars!!
         </Typography>
 
@@ -52,7 +58,7 @@ export default function Home() {
                   <div
                     onClick={() => onClickHandler(rover)}
                     key={rover.id}
-                    className="m-3 flex flex-col items-center hover:bg-slate-400"
+                    className="m-3 flex flex-col items-center hover:bg-slate-400 cursor-pointer"
                   >
                     <img src={exampleImageUrl} className="w-64 h-80" />
 

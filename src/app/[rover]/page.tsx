@@ -84,7 +84,7 @@ export default function Rover() {
 
       <div className="bg-slate-200 fixed h-32 w-full font-semibold text-slate-800 opacity-70 z-50 flex flex-row justify-around">
         <div className="ml-20 flex flex-col w-4/5">
-          <Typography variant="h4" my="auto" align="center">
+          <Typography variant="h4" my="auto" align="center" fontFamily="Play">
             Latest photos from {selectedRover?.name} mars-rover
           </Typography>
           {selectedRover ? (

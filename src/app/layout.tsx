@@ -18,7 +18,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin={""}
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Play&display=swap"
+        />
+      </head>
+      <body className="font-sans">
         <GlobalContextProvider>
           <Providers>{children}</Providers>
         </GlobalContextProvider>
