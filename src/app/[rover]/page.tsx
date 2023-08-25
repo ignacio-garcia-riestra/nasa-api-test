@@ -158,7 +158,7 @@ export default function Rover() {
             ))}
 
             {!hasNextPage && !isLoading && (
-              <h3 className="-mt-6 mb-8 text-white text-center text-2xl font-semibold">
+              <h3 className="mt-4 mb-8 text-white text-center text-2xl font-semibold">
                 No more photos to load
               </h3>
             )}

@@ -19,14 +19,9 @@ export default function Home() {
     router.replace(`/${rover.name}`);
   };
 
-  const getRovers = async () => {
-    const res = await axios.get(getRoversUrl);
-    return res.data.rovers;
-  };
-
   useEffect(() => {
     if (!rovers.length) {
-      getRovers().then((res) => setRovers(res));
+      axios.get(getRoversUrl).then((res) => setRovers(res.data.rovers));
     }
   }, [rovers.length]);
 
