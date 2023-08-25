@@ -15,15 +15,17 @@ import {
   ImageList,
   ImageListItem,
 } from "@mui/material";
+import { Camera } from "../interfaces/Camera";
+import { Photo } from "../interfaces/Photo";
 
 export default function Rover() {
   const router = useRouter();
 
   const { selectedRover, setSelectedRover } = useGlobalContext();
-  const [selectedCamera, setSelectedCamera] = useState<any>(null);
+  const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
 
   const fetchLast25Photos = async () => {
-    const last25Photos: Array<object> = [];
+    const last25Photos: Array<Photo> = [];
     let date = selectedRover?.max_date;
     while (last25Photos.length < 25) {
       await axios
@@ -42,9 +44,9 @@ export default function Rover() {
   };
 
   const getRelevantCameras = () => {
-    const relevantCameras: Array<any> = [];
+    const relevantCameras: Array<Camera> = [];
     photos.forEach((photo: any) => {
-      if (!relevantCameras.some((cam: any) => cam.id === photo.camera.id)) {
+      if (!relevantCameras.some((cam) => cam.id === photo.camera.id)) {
         relevantCameras.push(photo.camera);
       }
     });
@@ -54,7 +56,7 @@ export default function Rover() {
   const { data, isLoading, hasNextPage, fetchNextPage } = useInfiniteQuery(
     ["photos"],
     async ({ pageParam = 1 }) => {
-      const photosToShow =
+      const photosToShow: Array<Photo> =
         selectedRover?.status === "complete"
           ? await fetchLast25Photos()
           : await axios
@@ -137,7 +139,7 @@ export default function Rover() {
             {data?.pages.map((page, index) => (
               <ImageList key={index} cols={5} gap={16} className="mt-12">
                 {page.map(
-                  (photo: any) =>
+                  (photo) =>
                     (!selectedCamera ||
                       selectedCamera.id === photo.camera.id) && (
                       <ImageListItem key={photo.id}>

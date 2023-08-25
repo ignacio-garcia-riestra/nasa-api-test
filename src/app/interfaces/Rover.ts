@@ -6,6 +6,7 @@ export interface Rover {
   status: "active" | "complete";
   max_sol: number;
   max_date: string;
+  total_photos: number;
   cameras: Array<{
     name: string;
     full_name: string;
