@@ -8,11 +8,13 @@ import { useGlobalContext } from "../context/store";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { rootUrl } from "../constants";
+import { useState } from "react";
 
 export default function Rover() {
   const router = useRouter();
 
   const { selectedRover, setSelectedRover } = useGlobalContext();
+  const [selectedCamera, setSelectedCamera] = useState<any>(null);
 
   const fetchLast25Photos = async () => {
     const last25Photos: Array<object> = [];
@@ -31,6 +33,16 @@ export default function Rover() {
           .substring(0, 10);
     }
     return last25Photos;
+  };
+
+  const getRelevantCameras = () => {
+    const relevantCameras: Array<any> = [];
+    photos.forEach((photo: any) => {
+      if (!relevantCameras.some((cam: any) => cam.id === photo.camera.id)) {
+        relevantCameras.push(photo.camera);
+      }
+    });
+    return relevantCameras;
   };
 
   const { data, isLoading, hasNextPage, fetchNextPage } = useInfiniteQuery(
@@ -72,10 +84,23 @@ export default function Rover() {
       >
         Back to home
       </button>
+
       {selectedRover ? (
-        <h1 className="text-2xl font-semibold my-12">
-          {selectedRover?.name.toUpperCase()}
-        </h1>
+        <div>
+          <h1 className="text-2xl font-semibold my-12">
+            Rover: {selectedRover?.name.toUpperCase()}
+          </h1>
+          <div>
+            {getRelevantCameras().map((cam) => {
+              return (
+                <button className="mr-4" onClick={() => setSelectedCamera(cam)}>
+                  {cam.name}
+                </button>
+              );
+            })}
+            <button onClick={() => setSelectedCamera(null)}>All cameras</button>
+          </div>
+        </div>
       ) : null}
 
       {data ? (
@@ -87,22 +112,25 @@ export default function Rover() {
           loader={"Loading more photos..."}
         >
           {data?.pages.map((page, index) => (
-
             <ImageList key={index} cols={5} gap={16} className="my-12">
-              {page.map((photo: any) => (
-                <ImageListItem key={photo.id}>
-                  <img
-                    className="min-h-[120px]"
-                    src={photo.img_src}
-                    alt={`${photo.rover.name} mars-rover photo`}
-                    loading="lazy"
-                  />
-                  <ImageListItemBar
-                    title={`Camera: ${photo.camera.full_name}`}
-                    subtitle={`Date: ${photo.earth_date}`}
-                  />
-                </ImageListItem>
-              ))}
+              {page.map(
+                (photo: any) =>
+                  (!selectedCamera ||
+                    selectedCamera.id === photo.camera.id) && (
+                    <ImageListItem key={photo.id}>
+                      <img
+                        className="min-h-[120px]"
+                        src={photo.img_src}
+                        alt={`${photo.rover.name} mars-rover photo`}
+                        loading="lazy"
+                      />
+                      <ImageListItemBar
+                        title={`Camera: ${photo.camera.full_name}`}
+                        subtitle={`Date: ${photo.earth_date}`}
+                      />
+                    </ImageListItem>
+                  )
+              )}
             </ImageList>
           ))}
 
