@@ -1,10 +1,11 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { getRoversUrl, ROVERS_IMAGES } from "./constants";
 import { useGlobalContext } from "./context/store";
 import { Rover } from "./interfaces/Rover";
+import { Grid, Typography, CssBaseline, Container } from "@mui/material";
 
 export default function Home() {
   const router = useRouter();
@@ -30,30 +31,46 @@ export default function Home() {
   }, [rovers.length]);
 
   return (
-    <div>
-      <h1>NASA - API - TEST</h1>
+    <React.Fragment>
+      <CssBaseline />
+      <Container
+        maxWidth={false}
+        id="home"
+        className="bg-mars-space h-screen pt-8 flex flex-col"
+      >
+        <Typography variant="h2" mt={0} pl={45} color="whitesmoke">
+          Lets explore Mars!!
+        </Typography>
 
-      {rovers.length ? (
-        <div className="flex flex-row">
-          {Object.values(rovers).map((rover: Rover) => {
-            const roverName = rover.name.toLowerCase();
-            const exampleImageUrl = ROVERS_IMAGES[roverName];
+        {rovers.length ? (
+          <Grid
+            container
+            spacing={{ xs: 2, md: 3 }}
+            className="bg-slate-100 w-1/3 p-9 self-end justify-around rounded-2xl opacity-60"
+          >
+            {Object.values(rovers).map((rover: Rover) => {
+              const roverName = rover.name.toLowerCase();
+              const exampleImageUrl = ROVERS_IMAGES[roverName];
 
-            return (
-              <div key={rover.id} className="flex flex-col">
-                <img src={exampleImageUrl} className="w-72 h-96" />
+              return (
+                <Grid sm={12} md={6} key={rover.id}>
+                  <div
+                    onClick={() => onClickHandler(rover)}
+                    key={rover.id}
+                    className="m-3 flex flex-col items-center hover:bg-slate-400"
+                  >
+                    <img src={exampleImageUrl} className="w-64 h-80" />
 
-                <button
-                  className="btn btn-primary m-2 p-3 w-50"
-                  onClick={() => onClickHandler(rover)}
-                >
-                  {rover.name.toUpperCase()}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      ) : null}
-    </div>
+                    <span className="mt-2 w-50 font-semibold text-lg">
+                      {rover.name.toUpperCase()}: {rover.status}
+                    </span>
+                  </div>
+                </Grid>
+              );
+            })}
+          </Grid>
+        ) : null}
+      </Container>
+    </React.Fragment>
   );
 }

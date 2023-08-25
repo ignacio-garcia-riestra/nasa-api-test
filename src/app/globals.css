@@ -25,3 +25,15 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+#home {
+  background-image: url(assets/images/planet-mars.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#rover {
+  background-image: url(assets/images/mars-landscape.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
