@@ -39,6 +39,7 @@ export default function Home() {
           pl="18%"
           color="whitesmoke"
           fontFamily="Play"
+          id="home-header"
         >
           Lets explore Mars!!
         </Typography>
