@@ -1,4 +1,4 @@
-nasa-api-test is a simple web application that allows you to connect to the NASA API and view photos from the "Mars Rover"
+nasa-api-test is a simple page application that allows you to connect to the NASA API and view photos from the "Mars Rover"
 
 ## Builded with
 #### react 18.2.0
